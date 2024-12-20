@@ -1,6 +1,6 @@
 # acarreo
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
   <meta charset="UTF-8">
@@ -9,9 +9,36 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      margin: 20px;
+      margin: 0;
+      padding: 0;
       background-color: #f4f4f9;
     }
+
+    .header {
+      width: 100%;
+      height: 100vh;
+      background-image: url('https://www.sonda.com/images/default-source/noticias/miner%C3%ADa-.png?sfvrsn=34027d15_1');
+      background-size: cover; /* Asegura que la imagen cubra toda el área */
+      background-position: center center; /* Centra la imagen */
+      background-repeat: no-repeat; /* Evita la repetición de la imagen */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #ffffff;
+      position: relative;
+    }
+
+    .header h1 {
+      font-size: 50px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+      margin: 0;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
     .container {
       max-width: 1000px;
       margin: auto;
@@ -23,19 +50,18 @@
       flex-direction: column;
       gap: 30px;
     }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
+
     .selection-container {
       display: flex;
       gap: 30px;
       flex-wrap: wrap;
     }
+
     .list-container {
       flex: 1;
       min-width: 280px;
     }
+
     .list-container input {
       width: 100%;
       padding: 12px;
@@ -44,6 +70,7 @@
       border-radius: 8px;
       font-size: 16px;
     }
+
     .list-container ul {
       list-style: none;
       padding: 0;
@@ -52,15 +79,18 @@
       max-height: 250px;
       overflow-y: auto;
     }
+
     .list-container ul li {
       padding: 12px;
       cursor: pointer;
       border-bottom: 1px solid #eee;
       transition: background-color 0.3s;
     }
+
     .list-container ul li:hover {
       background-color: #f0f0f0;
     }
+
     .selected-container {
       flex: 1;
       border: 1px solid #ccc;
@@ -68,14 +98,17 @@
       padding: 20px;
       background: #fafafa;
     }
+
     .selected-container h4 {
       margin-top: 0;
       color: #333;
     }
+
     .selected-container ul {
       list-style: none;
       padding: 0;
     }
+
     .selected-container ul li {
       margin: 5px 0;
       padding: 8px;
@@ -83,9 +116,11 @@
       border-radius: 4px;
       cursor: pointer;
     }
+
     .selected-container ul li:hover {
       background-color: #b3e5fc;
     }
+
     button {
       width: 100%;
       padding: 14px;
@@ -97,9 +132,11 @@
       cursor: pointer;
       transition: background-color 0.3s;
     }
+
     button:hover {
       background-color: #0056b3;
     }
+
     .result {
       margin-top: 30px;
       padding: 15px;
@@ -107,48 +144,63 @@
       border: 1px solid #b6e6b6;
       border-radius: 8px;
     }
-    canvas {
+
+    .grafica {
       margin-top: 20px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
     }
+
+    /* Media Query para dispositivos móviles */
+    @media (max-width: 768px) {
+      .header {
+        height: auto; /* Ajusta la altura según el contenido */
+        padding: 10px 0; /* Agrega algo de espacio si es necesario */
+      }
+    }
+
   </style>
+
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 
 <body>
-  <div class="container">
+  <div class="header">
     <h1>Match Camiones y Palas</h1>
-    <div class="selection-container">
-      <div class="list-container">
-        <h3>Selecciona Camiones:</h3>
-        <input type="text" id="filterCamiones" placeholder="Filtrar camiones...">
-        <ul id="camionList">
-          <li data-name="CAT 797" data-capacidad="371" data-productividad="6.045">CAT 797 (371t)</li>
-          <li data-name="KOM980" data-capacidad="392" data-productividad="6.045">KOM980 (392t)</li>
-          <li data-name="XDE 320" data-capacidad="300" data-productividad="5.536">XDE 320 (300t)</li>
-        </ul>
-      </div>
-      <div class="list-container">
-        <h3>Selecciona Palas:</h3>
-        <input type="text" id="filterPalas" placeholder="Filtrar palas...">
-        <ul id="palaList">
-          <li data-name="Pala CAT 7495" data-capacidad="89.8">Pala CAT 7495 (89.8t)</li>
-          <li data-name="LT 2350 HL" data-capacidad="62.4">LT 2350 HL (62.4t)</li>
-        </ul>
-      </div>
-      <div class="selected-container">
-        <h4>Camiones Seleccionados:</h4>
-        <ul id="selectedCamiones"></ul>
-        <h4>Palas Seleccionadas:</h4>
-        <ul id="selectedPalas"></ul>
-      </div>
-    </div>
-    <button onclick="calcularMatch()">Calcular Mejor Opción</button>
-    <div id="resultados" class="result" style="display: none;"></div>
-    <canvas id="grafica" width="600" height="300"></canvas>
   </div>
+
+  <div class="content">
+    <div class="container">
+      <div class="selection-container">
+        <div class="list-container">
+          <h3>Selecciona Camiones:</h3>
+          <input type="text" id="filterCamiones" placeholder="Filtrar camiones...">
+          <ul id="camionList">
+            <li data-name="CAT 797" data-capacidad="371" data-productividad="6.045">CAT 797 (371t)</li>
+            <li data-name="KOM980" data-capacidad="392" data-productividad="6.045">KOM980 (392t)</li>
+            <li data-name="XDE 320" data-capacidad="300" data-productividad="5.536">XDE 320 (300t)</li>
+          </ul>
+        </div>
+        <div class="list-container">
+          <h3>Selecciona Palas:</h3>
+          <input type="text" id="filterPalas" placeholder="Filtrar palas...">
+          <ul id="palaList">
+            <li data-name="Pala CAT 7495" data-capacidad="89.8">Pala CAT 7495 (89.8t)</li>
+            <li data-name="LT 2350 HL" data-capacidad="62.4">LT 2350 HL (62.4t)</li>
+          </ul>
+        </div>
+        <div class="selected-container">
+          <h4>Camiones Seleccionados:</h4>
+          <ul id="selectedCamiones"></ul>
+          <h4>Palas Seleccionadas:</h4>
+          <ul id="selectedPalas"></ul>
+        </div>
+      </div>
+      <button onclick="calcularMatch()">Calcular Mejor Opción</button>
+      <div id="resultados" class="result" style="display: none;"></div>
+      <div class="grafica" id="grafica"></div>
+    </div>
+  </div>
+
   <script>
-    // Lógica para filtrar camiones y palas
     document.getElementById('filterCamiones').addEventListener('input', function () {
       const filter = this.value.toLowerCase();
       const items = document.querySelectorAll('#camionList li');
@@ -167,7 +219,6 @@
       });
     });
 
-    // Selección de camiones y palas
     document.querySelectorAll('#camionList li').forEach(item => {
       item.addEventListener('click', function () {
         agregarSeleccion(this, 'selectedCamiones');
@@ -190,7 +241,6 @@
     }
 
     function calcularMatch() {
-      // Obtener camiones seleccionados
       const camiones = Array.from(document.querySelectorAll('#selectedCamiones li'))
         .map(item => ({
           nombre: item.dataset.name,
@@ -198,20 +248,17 @@
           productividad: parseFloat(item.dataset.productividad)
         }));
 
-      // Obtener palas seleccionadas
       const palas = Array.from(document.querySelectorAll('#selectedPalas li'))
         .map(item => ({
           nombre: item.dataset.name,
           capacidad: parseFloat(item.dataset.capacidad)
         }));
 
-      // Validar selección
       if (camiones.length === 0 || palas.length === 0) {
         alert('Por favor selecciona al menos un camión y una pala.');
         return;
       }
 
-      // Calcular productividad
       let resultados = [];
       camiones.forEach(camion => {
         palas.forEach(pala => {
@@ -225,10 +272,8 @@
         });
       });
 
-      // Ordenar resultados
       resultados.sort((a, b) => Math.abs(a.ratio - 1) - Math.abs(b.ratio - 1));
 
-      // Mostrar resultados
       const resultadosDiv = document.getElementById('resultados');
       resultadosDiv.style.display = 'block';
       resultadosDiv.innerHTML = '<h3>Resultados:</h3>';
@@ -236,36 +281,26 @@
         resultadosDiv.innerHTML += `<p>Camión: ${res.camion}, Pala: ${res.pala}, Ratio: ${res.ratio}, Productividad: ${res.productividad} t/h</p>`;
       });
 
-      // Generar gráfica
       generarGrafica(resultados);
     }
 
-    function generarGrafica(resultados) {
-      const canvas = document.getElementById('grafica');
-      const ctx = canvas.getContext('2d');
+    function generarGrafica(data) {
+      const x = data.map(item => `${item.camion} - ${item.pala}`);
+      const y = data.map(item => item.productividad);
 
-      // Limpiar canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const trace = {
+        x: x,
+        y: y,
+        type: 'bar'
+      };
 
-      // Establecer fondo
-      ctx.fillStyle = '#f0f0f0';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const layout = {
+        title: 'Productividad de Camiones y Palas',
+        xaxis: { title: 'Combinación Camión - Pala' },
+        yaxis: { title: 'Productividad (t/h)' }
+      };
 
-      // Dibujar gráfica
-      resultados.slice(0, 5).forEach((res, index) => {
-        const x = 100 + index * 140; // Mayor espacio entre barras
-        const barHeight = res.productividad * 10; // Escala aumentada
-        const y = canvas.height - barHeight - 30;
-
-        // Dibuja la barra
-        ctx.fillStyle = '#007bff';
-        ctx.fillRect(x, y, 100, barHeight);
-
-        // Dibuja texto
-        ctx.fillStyle = '#333';
-        ctx.fillText(`${res.camion} / ${res.pala}`, x + 10, canvas.height - 10);
-        ctx.fillText(`${res.productividad} t/h`, x + 10, y - 5);
-      });
+      Plotly.newPlot('grafica', [trace], layout);
     }
   </script>
 </body>
